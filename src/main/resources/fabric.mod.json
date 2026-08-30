@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "killsound",
+  "version": "${version}",
+  "name": "KillSound",
+  "description": "A client-side Fabric mod that plays custom OGG sound effects on enemy kills and player deaths.",
+  "authors": [
+    "ignwisep"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/killsound/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.killsound.KillSoundClient"
+    ],
+    "modmenu": [
+      "com.example.killsound.gui.ModMenuIntegration"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "yet_another_config_lib_v3": "*"
+  }
+}

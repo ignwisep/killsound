@@ -1,0 +1,42 @@
+# Gradle build and cache
+.gradle/
+build/
+bin/
+out/
+
+# Minecraft Fabric Loom runtime
+run/
+runClient/
+runServer/
+.fabric/
+
+# IDE & Editor settings
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+.nbcode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# Logs & runtime data
+*.log
+logs/
+crash-reports/
+
+# Local sound files & configs
+killsound/
