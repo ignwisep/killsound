@@ -90,7 +90,7 @@ public class CustomSoundManager {
 
     public void playEnemyKillSound() {
         KillSoundConfig config = KillSoundClient.getInstance().getConfig();
-        if (config.enemyKillEnabled) {
+        if (config != null && config.enemyKillEnabled) {
             LOGGER.info("Playing enemy kill sound: " + config.enemyKillSound);
             play(config.enemyKillSound, config.enemyKillVolume, config.enemyKillPitch);
         }
@@ -98,7 +98,7 @@ public class CustomSoundManager {
 
     public void playOwnDeathSound() {
         KillSoundConfig config = KillSoundClient.getInstance().getConfig();
-        if (config.ownDeathEnabled) {
+        if (config != null && config.ownDeathEnabled) {
             LOGGER.info("Playing own death sound: " + config.ownDeathSound);
             play(config.ownDeathSound, config.ownDeathVolume, config.ownDeathPitch);
         }

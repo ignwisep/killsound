@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -33,7 +34,7 @@ public class ConfigManager {
         }
 
         try (BufferedReader reader = Files.newBufferedReader(configPath)) {
-            Object parsed = GSON.fromJson(reader, KillSoundConfig.class);
+            Object parsed = GSON.fromJson(reader, (Type) KillSoundConfig.class);
             if (parsed instanceof KillSoundConfig loaded) {
                 loaded.validate();
                 this.config = loaded;

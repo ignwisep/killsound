@@ -7,8 +7,15 @@ import com.example.killsound.detection.DeathDetector;
 import com.example.killsound.detection.KillDetector;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +56,28 @@ public class KillSoundClient implements ClientModInitializer {
             deathDetector.onClientTick(client);
         });
 
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if (world.isClientSide() && player == Minecraft.getInstance().player) {
+                killDetector.onPlayerAttack(entity);
+            }
+            return InteractionResult.PASS;
+        });
+
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            if (world.isClientSide() && player == Minecraft.getInstance().player) {
+                killDetector.onPlayerUseBlock(hitResult.getBlockPos());
+            }
+            return InteractionResult.PASS;
+        });
+
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            handleIncomingMessage(message);
+        });
+
+        ClientReceiveMessageEvents.CHAT.register((message, signedMessage, sender, params, receptionTimestamp) -> {
+            handleIncomingMessage(message);
+        });
+
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             killDetector.reset();
             deathDetector.reset();
@@ -60,6 +89,23 @@ public class KillSoundClient implements ClientModInitializer {
         });
 
         LOGGER.info("KillSound initialized successfully.");
+    }
+
+    private void handleIncomingMessage(Component message) {
+        if (message == null) {
+            return;
+        }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        String localPlayerName = player.getScoreboardName();
+        if (localPlayerName == null || localPlayerName.isBlank()) {
+            localPlayerName = player.getName().getString();
+        }
+
+        deathDetector.onDeathMessage(message, localPlayerName);
+        killDetector.onGameOrChatMessage(message, localPlayerName);
     }
 
     public static KillSoundClient getInstance() {
