@@ -62,7 +62,19 @@ public class KillSoundConfigScreen {
         ButtonOption testEnemyKillButton = ButtonOption.createBuilder()
                 .name(Component.literal("Test Enemy Kill Sound"))
                 .description(OptionDescription.of(Component.literal("Play the configured enemy kill sound with current volume and pitch.")))
-                .action((yaclScreen, btn) -> soundManager.play(config.enemyKillSound, config.enemyKillVolume, config.enemyKillPitch))
+                .action((yaclScreen, btn) -> {
+                    String sound = enemyKillSoundOption.pendingValue();
+                    if (sound == null || sound.isBlank()) {
+                        sound = config.enemyKillSound;
+                    }
+                    Float vol = enemyKillVolumeOption.pendingValue();
+                    float volume = (vol != null) ? vol : config.enemyKillVolume;
+                    Float pit = enemyKillPitchOption.pendingValue();
+                    float pitch = (pit != null) ? pit : config.enemyKillPitch;
+
+                    soundManager.stopAll();
+                    soundManager.play(sound, volume, pitch);
+                })
                 .build();
 
         Option<Boolean> ownDeathEnabledOption = Option.<Boolean>createBuilder()
@@ -96,7 +108,19 @@ public class KillSoundConfigScreen {
         ButtonOption testOwnDeathButton = ButtonOption.createBuilder()
                 .name(Component.literal("Test Own Death Sound"))
                 .description(OptionDescription.of(Component.literal("Play the configured own death sound with current volume and pitch.")))
-                .action((yaclScreen, btn) -> soundManager.play(config.ownDeathSound, config.ownDeathVolume, config.ownDeathPitch))
+                .action((yaclScreen, btn) -> {
+                    String sound = ownDeathSoundOption.pendingValue();
+                    if (sound == null || sound.isBlank()) {
+                        sound = config.ownDeathSound;
+                    }
+                    Float vol = ownDeathVolumeOption.pendingValue();
+                    float volume = (vol != null) ? vol : config.ownDeathVolume;
+                    Float pit = ownDeathPitchOption.pendingValue();
+                    float pitch = (pit != null) ? pit : config.ownDeathPitch;
+
+                    soundManager.stopAll();
+                    soundManager.play(sound, volume, pitch);
+                })
                 .build();
 
         ButtonOption refreshSoundsButton = ButtonOption.createBuilder()

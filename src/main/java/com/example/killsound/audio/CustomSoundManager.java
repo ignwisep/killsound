@@ -42,8 +42,8 @@ public class CustomSoundManager {
     }
 
     public synchronized void refreshSounds() {
+        stopAll();
         clearCachedBuffers();
-        cleanStoppedSources();
         availableSounds.clear();
 
         FileUtil.ensureDirectoryExists(soundsDir);
@@ -115,6 +115,11 @@ public class CustomSoundManager {
             return;
         }
 
+        float clampedVolume = Math.max(0.0f, Math.min(2.0f, volume));
+        if (clampedVolume <= 0.0f) {
+            return;
+        }
+
         cleanStoppedSources();
 
         Integer bufferId = getOrCreateBuffer(soundPath);
@@ -130,10 +135,11 @@ public class CustomSoundManager {
                 return;
             }
 
-            float clampedVolume = Math.max(0.0f, Math.min(2.0f, volume));
             float clampedPitch = Math.max(0.5f, Math.min(2.0f, pitch));
 
             AL10.alSourcei(sourceId, AL10.AL_BUFFER, bufferId);
+            AL10.alSourcef(sourceId, AL10.AL_MIN_GAIN, 0.0f);
+            AL10.alSourcef(sourceId, AL10.AL_MAX_GAIN, 10.0f);
             AL10.alSourcef(sourceId, AL10.AL_GAIN, clampedVolume);
             AL10.alSourcef(sourceId, AL10.AL_PITCH, clampedPitch);
             AL10.alSourcei(sourceId, AL10.AL_SOURCE_RELATIVE, AL10.AL_TRUE);
@@ -227,7 +233,6 @@ public class CustomSoundManager {
             AL10.alDeleteSources(sourceId);
         }
         activeSources.clear();
-        clearCachedBuffers();
     }
 
     public void openSoundsFolder() {
